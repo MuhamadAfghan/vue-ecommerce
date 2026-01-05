@@ -14,18 +14,19 @@
           that matches <br class="hidden md:block" />
           your style
         </h1>
-        <p class="font-satoshi text-black/60 text-sm md:text-base max-w-sm">
+        <p class="font-satoshi mb-10 text-black/60 text-sm md:text-base max-w-sm">
           Browse through our diverse range of meticulously crafted garments, designed to bring out
           your individuality and cater to your sense of style.
         </p>
-        <button
+        <RouterLink
+          to="/shop"
           class="bg-black text-white px-12 py-3.5 rounded-full font-medium hover:bg-black/90 transition-transform w-full md:w-auto"
         >
           Shop Now
-        </button>
+        </RouterLink>
 
         <div
-          class="flex items-center gap-4 md:gap-8 pt-6 flex-wrap justify-center md:justify-start"
+          class="flex items-center mt-14 gap-4 md:gap-8 pt-6 flex-wrap justify-center md:justify-start"
         >
           <div class="border-r border-gray-300 pr-4 md:pr-8 last:border-0">
             <h3 class="font-satoshi font-bold text-2xl md:text-4xl block">200+</h3>
