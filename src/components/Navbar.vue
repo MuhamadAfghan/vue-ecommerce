@@ -122,7 +122,7 @@ const menuItems = [
                   v-for="item in menuItems"
                   :key="item.name"
                   class="flex items-center gap-3 p-2 rounded-xl hover:bg-[#F0F0F0] transition-colors cursor-pointer group/item"
-                  @click="$router.push('/shop')"
+                  @click="$router.push(`/shop?dress_style=${item.name.toLowerCase()}`)"
                 >
                   <img
                     :src="item.image"
@@ -160,7 +160,7 @@ const menuItems = [
               <!-- Right Column: Featured -->
               <div
                 class="w-1/2 relative rounded-xl overflow-hidden bg-[#F0F0F0] min-h-[300px] group/card cursor-pointer"
-                @click="$router.push('/shop')"
+                @click="$router.push('/shop?dress_style=party')"
               >
                 <img
                   src="/images/dress-style/image copy 2.png"
@@ -196,9 +196,9 @@ const menuItems = [
             </div>
           </div>
         </div>
-        <RouterLink to="/shop" class="hover:text-black/70">On Sale</RouterLink>
-        <RouterLink to="/shop" class="hover:text-black/70">New Arrivals</RouterLink>
-        <RouterLink to="/shop" class="hover:text-black/70">Brands</RouterLink>
+        <RouterLink to="/shop?sort=sale" class="hover:text-black/70">On Sale</RouterLink>
+        <RouterLink to="/shop?sort=newest" class="hover:text-black/70">New Arrivals</RouterLink>
+        <RouterLink to="/brands" class="hover:text-black/70">Brands</RouterLink>
       </div>
 
       <!-- Search Bar -->
@@ -299,13 +299,13 @@ const menuItems = [
         <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
           >Shop</RouterLink
         >
-        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+        <RouterLink to="/shop?sort=sale" class="hover:text-black/70" @click="visible = false"
           >On Sale</RouterLink
         >
-        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+        <RouterLink to="/shop?sort=newest" class="hover:text-black/70" @click="visible = false"
           >New Arrivals</RouterLink
         >
-        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+        <RouterLink to="/brands" class="hover:text-black/70" @click="visible = false"
           >Brands</RouterLink
         >
       </div>

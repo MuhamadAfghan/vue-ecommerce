@@ -1,18 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import ProductFilters from '../components/ProductFilters.vue'
 import ProductCard from '../components/ProductCard.vue'
 import Drawer from 'primevue/drawer'
 import Paginator from 'primevue/paginator'
-import Select from 'primevue/select' // Dropdown renamed to Select in v4? Checking docs... usually Dropdown or Select. Let's try Select or assume Dropdown.
-// Actually in v4 it is Select usually or Dropdown is still there. Let's use Select if available or fallback to Dropdown if error.
-// Wait, for v4 'Select' is the new name for Dropdown? No, Dropdown is still common. Let's use Dropdown to be safe or check imports?
-// I'll stick to 'Select' as it matches standard HTML, but PrimeVue usually has Dropdown.
-// Let's use a simple native select for sorting to match the "Sort by: Most Popular" text style or a minimal custom one.
-// The design shows "Sort by: Most Popular" with a dropdown arrow.
-
 import Dropdown from 'primevue/dropdown'
 
+const route = useRoute()
 const visible = ref(false) // Drawer state
 const sortOption = ref({ name: 'Most Popular', code: 'popular' })
 const sortOptions = [
@@ -22,14 +17,30 @@ const sortOptions = [
   { name: 'Price: High to Low', code: 'price_desc' },
 ]
 
+// Handle initial sort from URL and watch for changes
+const handleSortFromUrl = () => {
+  const sort = route.query.sort
+  if (sort === 'sale') {
+    // Custom logic for sale page title or state could go here
+    sortOption.value = { name: 'Most Popular', code: 'popular' } // Keep default sort for sale page for now
+  } else if (sort === 'newest') {
+    sortOption.value = sortOptions.find((o) => o.code === 'newest')
+  }
+}
+
+watch(() => route.query.sort, handleSortFromUrl)
+onMounted(handleSortFromUrl)
+
 // Mock Products
-const products = [
+const allProducts = [
   {
     id: 1,
     title: 'Gradient Graphic T-shirt',
     price: 145,
     rating: 3.5,
     image: '/images/products/image copy 8.png',
+    date_added: '2023-01-01',
+    dress_style: 'casual',
   },
   {
     id: 2,
@@ -37,6 +48,8 @@ const products = [
     price: 180,
     rating: 4.5,
     image: '/images/products/image copy 9.png',
+    date_added: '2023-02-01',
+    dress_style: 'casual',
   },
   {
     id: 3,
@@ -45,6 +58,8 @@ const products = [
     originalPrice: 150,
     rating: 5.0,
     image: '/images/products/image copy 10.png',
+    date_added: '2023-03-01',
+    dress_style: 'party',
   },
   {
     id: 4,
@@ -53,6 +68,9 @@ const products = [
     originalPrice: 260,
     rating: 3.5,
     image: '/images/products/image copy 8.png',
+    descuento: true,
+    date_added: '2023-01-15',
+    dress_style: 'casual',
   },
   {
     id: 5,
@@ -60,6 +78,8 @@ const products = [
     price: 180,
     rating: 4.5,
     image: '/images/products/image copy 9.png',
+    date_added: '2023-04-01',
+    dress_style: 'formal',
   },
   {
     id: 6,
@@ -68,6 +88,8 @@ const products = [
     originalPrice: 160,
     rating: 4.5,
     image: '/images/products/image copy 10.png',
+    date_added: '2023-02-15',
+    dress_style: 'casual',
   },
   {
     id: 7,
@@ -76,6 +98,8 @@ const products = [
     originalPrice: 232,
     rating: 5.0,
     image: '/images/products/image copy 11.png',
+    date_added: '2023-03-15',
+    dress_style: 'formal',
   },
   {
     id: 8,
@@ -83,6 +107,8 @@ const products = [
     price: 145,
     rating: 4.0,
     image: '/images/products/image copy 12.png',
+    date_added: '2023-01-20',
+    dress_style: 'gym',
   },
   {
     id: 9,
@@ -90,8 +116,38 @@ const products = [
     price: 80,
     rating: 3.0,
     image: '/images/products/image copy 13.png',
+    date_added: '2023-04-10',
+    dress_style: 'casual',
   },
 ]
+
+import { computed } from 'vue'
+
+const filteredProducts = computed(() => {
+  let filtered = [...allProducts]
+  const sort = route.query.sort
+
+  // Apply Filter based on "On Sale"
+  if (sort === 'sale') {
+    filtered = filtered.filter((p) => p.originalPrice || p.descuento)
+  }
+
+  // Apply Sorting
+  if (sortOption.value.code === 'newest' || sort === 'newest') {
+    filtered.sort((a, b) => new Date(b.date_added) - new Date(a.date_added))
+  } else if (sortOption.value.code === 'price_asc') {
+    filtered.sort((a, b) => a.price - b.price)
+  } else if (sortOption.value.code === 'price_desc') {
+    filtered.sort((a, b) => b.price - a.price)
+  }
+
+  // Apply Filter based on "Dress Style"
+  if (route.query.dress_style) {
+    filtered = filtered.filter((p) => p.dress_style === route.query.dress_style)
+  }
+
+  return filtered
+})
 </script>
 
 <template>
@@ -107,7 +163,7 @@ const products = [
         />
       </svg>
 
-      <span class="text-black">Casual</span>
+      <span class="text-black capitalize">{{ route.query.dress_style }}</span>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
@@ -120,10 +176,18 @@ const products = [
       <div class="flex-1">
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="font-integral font-bold text-3xl">Casual</h2>
+          <h2 class="font-integral font-bold text-3xl capitalize">
+            {{
+              route.query.sort === 'sale'
+                ? 'On Sale'
+                : route.query.sort === 'newest'
+                ? 'New Arrivals'
+                : route.query.dress_style
+            }}
+          </h2>
           <div class="flex items-center gap-4">
             <span class="text-black/60 font-satoshi text-sm inline-block"
-              >Showing 1-10 of 100 Products</span
+              >Showing 1-{{ filteredProducts.length }} of {{ allProducts.length }} Products</span
             >
             <div
               class="items-center hidden md:flex gap-2 text-black/60 font-satoshi text-sm whitespace-nowrap"
@@ -160,7 +224,7 @@ const products = [
 
         <!-- Products Grid -->
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-x-6 md:gap-y-8 mb-10">
-          <ProductCard v-for="product in products" :key="product.id" v-bind="product" />
+          <ProductCard v-for="product in filteredProducts" :key="product.id" v-bind="product" />
         </div>
 
         <!-- Pagination -->
