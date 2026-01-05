@@ -51,21 +51,21 @@ const topSelling = [
     title: 'Courage Graphic T-shirt',
     price: 145,
     rating: 4.0,
-    image: '/images/products/image copy 12.png',
+    image: '/images/products/image copy 6.png',
   },
   {
     id: 7,
     title: 'Loose Fit Bermuda Shorts',
     price: 80,
     rating: 3.0,
-    image: '/images/products/image copy 13.png',
+    image: '/images/products/image copy 3.png',
   },
   {
     id: 8,
     title: 'Faded Skinny Jeans',
     price: 210,
     rating: 4.5,
-    image: '/images/products/image copy 14.png',
+    image: '/images/products/image copy 2.png',
   },
 ]
 </script>

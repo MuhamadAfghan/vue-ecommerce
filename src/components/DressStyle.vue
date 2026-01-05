@@ -1,18 +1,22 @@
 <script setup>
 // DressStyle component
 const styles = [
-  { name: 'Casual', image: '/images/dress-style/image.png', class: 'col-span-1 md:col-span-4' }, // Small
+  {
+    name: 'Casual',
+    image: '/images/dress-style/image copy 3.png',
+    class: 'col-span-1 md:col-span-4',
+  }, // Small
   {
     name: 'Formal',
-    image: '/images/dress-style/image copy.png',
+    image: '/images/dress-style/image copy 2.png',
     class: 'col-span-1 md:col-span-8',
   }, // Large
   {
     name: 'Party',
-    image: '/images/dress-style/image copy 2.png',
+    image: '/images/dress-style/image copy.png',
     class: 'col-span-1 md:col-span-8',
   }, // Large
-  { name: 'Gym', image: '/images/dress-style/image copy 3.png', class: 'col-span-1 md:col-span-4' }, // Small
+  { name: 'Gym', image: '/images/dress-style/image.png', class: 'col-span-1 md:col-span-4' }, // Small
 ]
 </script>
 

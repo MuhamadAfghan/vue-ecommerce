@@ -6,6 +6,7 @@ import ProductCard from '../components/ProductCard.vue'
 import Drawer from 'primevue/drawer'
 import Paginator from 'primevue/paginator'
 import Dropdown from 'primevue/dropdown'
+import { products } from '../data/products'
 
 const route = useRoute()
 const visible = ref(false) // Drawer state
@@ -16,6 +17,7 @@ const sortOptions = [
   { name: 'Price: Low to High', code: 'price_asc' },
   { name: 'Price: High to Low', code: 'price_desc' },
 ]
+const dressStyle = ref(route.query.dress_style)
 
 // Handle initial sort from URL and watch for changes
 const handleSortFromUrl = () => {
@@ -31,100 +33,10 @@ const handleSortFromUrl = () => {
 watch(() => route.query.sort, handleSortFromUrl)
 onMounted(handleSortFromUrl)
 
-// Mock Products
-const allProducts = [
-  {
-    id: 1,
-    title: 'Gradient Graphic T-shirt',
-    price: 145,
-    rating: 3.5,
-    image: '/images/products/image copy 8.png',
-    date_added: '2023-01-01',
-    dress_style: 'casual',
-  },
-  {
-    id: 2,
-    title: 'Polo with Tipping Details',
-    price: 180,
-    rating: 4.5,
-    image: '/images/products/image copy 9.png',
-    date_added: '2023-02-01',
-    dress_style: 'casual',
-  },
-  {
-    id: 3,
-    title: 'Black Striped T-shirt',
-    price: 120,
-    originalPrice: 150,
-    rating: 5.0,
-    image: '/images/products/image copy 10.png',
-    date_added: '2023-03-01',
-    dress_style: 'party',
-  },
-  {
-    id: 4,
-    title: 'Skinny Fit Jeans',
-    price: 240,
-    originalPrice: 260,
-    rating: 3.5,
-    image: '/images/products/image copy 8.png',
-    descuento: true,
-    date_added: '2023-01-15',
-    dress_style: 'casual',
-  },
-  {
-    id: 5,
-    title: 'Checkered Shirt',
-    price: 180,
-    rating: 4.5,
-    image: '/images/products/image copy 9.png',
-    date_added: '2023-04-01',
-    dress_style: 'formal',
-  },
-  {
-    id: 6,
-    title: 'Sleeve Striped T-shirt',
-    price: 130,
-    originalPrice: 160,
-    rating: 4.5,
-    image: '/images/products/image copy 10.png',
-    date_added: '2023-02-15',
-    dress_style: 'casual',
-  },
-  {
-    id: 7,
-    title: 'Vertical Striped Shirt',
-    price: 212,
-    originalPrice: 232,
-    rating: 5.0,
-    image: '/images/products/image copy 11.png',
-    date_added: '2023-03-15',
-    dress_style: 'formal',
-  },
-  {
-    id: 8,
-    title: 'Courage Graphic T-shirt',
-    price: 145,
-    rating: 4.0,
-    image: '/images/products/image copy 12.png',
-    date_added: '2023-01-20',
-    dress_style: 'gym',
-  },
-  {
-    id: 9,
-    title: 'Loose Fit Bermuda Shorts',
-    price: 80,
-    rating: 3.0,
-    image: '/images/products/image copy 13.png',
-    date_added: '2023-04-10',
-    dress_style: 'casual',
-  },
-]
-
 import { computed } from 'vue'
 
 const filteredProducts = computed(() => {
-  let filtered = [...allProducts]
+  let filtered = [...products]
   const sort = route.query.sort
 
   // Apply Filter based on "On Sale"
@@ -143,7 +55,9 @@ const filteredProducts = computed(() => {
 
   // Apply Filter based on "Dress Style"
   if (route.query.dress_style) {
-    filtered = filtered.filter((p) => p.dress_style === route.query.dress_style)
+    filtered = filtered.filter(
+      (p) => p.dress_style && p.dress_style.toLowerCase() === route.query.dress_style.toLowerCase()
+    )
   }
 
   return filtered
@@ -163,7 +77,7 @@ const filteredProducts = computed(() => {
         />
       </svg>
 
-      <span class="text-black capitalize">{{ route.query.dress_style }}</span>
+      <span class="text-black capitalize">{{ route.query.dress_style || 'Shop' }}</span>
     </div>
 
     <div class="flex flex-col lg:flex-row gap-8">
@@ -183,11 +97,13 @@ const filteredProducts = computed(() => {
                 : route.query.sort === 'newest'
                 ? 'New Arrivals'
                 : route.query.dress_style
+                ? route.query.dress_style
+                : 'Shop'
             }}
           </h2>
           <div class="flex items-center gap-4">
             <span class="text-black/60 font-satoshi text-sm inline-block"
-              >Showing 1-{{ filteredProducts.length }} of {{ allProducts.length }} Products</span
+              >Showing 1-{{ filteredProducts.length }} of {{ products.length }} Products</span
             >
             <div
               class="items-center hidden md:flex gap-2 text-black/60 font-satoshi text-sm whitespace-nowrap"
@@ -224,7 +140,12 @@ const filteredProducts = computed(() => {
 
         <!-- Products Grid -->
         <div class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-x-6 md:gap-y-8 mb-10">
-          <ProductCard v-for="product in filteredProducts" :key="product.id" v-bind="product" />
+          <ProductCard
+            v-for="product in filteredProducts"
+            :key="product.id"
+            v-bind="product"
+            :image="product.images[0]"
+          />
         </div>
 
         <!-- Pagination -->
