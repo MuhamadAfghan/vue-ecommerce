@@ -1,12 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
+import Drawer from 'primevue/drawer'
 
-const isMenuOpen = ref(false)
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+const visible = ref(false)
 </script>
 
 <template>
@@ -38,10 +35,10 @@ const toggleMenu = () => {
 
     <!-- Main Navigation -->
     <nav
-      class="container mx-auto px-4 py-4 md:py-6 flex items-center justify-between gap-4 md:gap-8"
+      class="container mx-auto px-4 py-4 lg:py-6 flex items-center justify-between gap-4 lg:gap-8"
     >
       <!-- Mobile Menu Button -->
-      <button @click="toggleMenu" class="md:hidden">
+      <button @click="visible = true" class="lg:hidden">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -62,12 +59,12 @@ const toggleMenu = () => {
       <!-- Logo -->
       <RouterLink
         to="/"
-        class="text-2xl md:text-4xl font-extrabold font-integral tracking-tighter uppercase relative -top-1"
+        class="text-2xl lg:text-4xl font-extrabold font-integral tracking-tighter uppercase relative -top-1"
         >Shop.co</RouterLink
       >
 
       <!-- Desktop Links -->
-      <div class="hidden md:flex items-center gap-6 font-satoshi text-base">
+      <div class="hidden lg:flex items-center gap-6 font-satoshi text-base">
         <RouterLink to="/shop" class="flex items-center gap-1 hover:text-black/70"
           >Shop
           <svg
@@ -93,7 +90,7 @@ const toggleMenu = () => {
 
       <!-- Search Bar -->
       <div
-        class="hidden md:flex flex-1 max-w-md bg-[#F0F0F0] rounded-full px-4 py-3 items-center gap-3"
+        class="hidden lg:flex flex-1 max-w-md bg-[#F0F0F0] rounded-full px-4 py-3 items-center gap-3"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -117,8 +114,8 @@ const toggleMenu = () => {
       </div>
 
       <!-- Icons -->
-      <div class="flex items-center gap-3 md:gap-4">
-        <button class="hover:text-black/60 transition-colors">
+      <div class="flex items-center gap-3 lg:gap-4">
+        <button class="hover:text-black/60 transition-colors lg:hidden">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -170,38 +167,35 @@ const toggleMenu = () => {
       </div>
     </nav>
 
-    <!-- Mobile Menu Overlay -->
-    <div
-      v-if="isMenuOpen"
-      class="fixed inset-0 bg-black/50 z-40 md:hidden"
-      @click="toggleMenu"
-    ></div>
-    <div
-      v-if="isMenuOpen"
-      class="fixed inset-y-0 left-0 bg-white w-3/4 max-w-xs z-50 p-6 flex flex-col gap-6 shadow-xl transition-transform duration-300"
+    <!-- Mobile Menu Drawer -->
+    <Drawer
+      v-model:visible="visible"
+      :header="'Menu'"
+      position="left"
+      class="!w-3/4 !max-w-xs font-satoshi"
     >
-      <button @click="toggleMenu" class="self-end mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+      <template #header>
+        <RouterLink
+          to="/"
+          class="text-2xl font-extrabold font-integral tracking-tighter uppercase"
+          @click="visible = false"
+          >Shop.co</RouterLink
         >
-          <path d="M18 6 6 18" />
-          <path d="m6 6 12 12" />
-        </svg>
-      </button>
-      <div class="flex flex-col gap-4 font-satoshi text-lg font-medium">
-        <RouterLink to="#" @click="toggleMenu">Shop</RouterLink>
-        <RouterLink to="#" @click="toggleMenu">On Sale</RouterLink>
-        <RouterLink to="#" @click="toggleMenu">New Arrivals</RouterLink>
-        <RouterLink to="#" @click="toggleMenu">Brands</RouterLink>
+      </template>
+      <div class="flex flex-col gap-6 font-satoshi text-lg font-medium mt-4">
+        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+          >Shop</RouterLink
+        >
+        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+          >On Sale</RouterLink
+        >
+        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+          >New Arrivals</RouterLink
+        >
+        <RouterLink to="/shop" class="hover:text-black/70" @click="visible = false"
+          >Brands</RouterLink
+        >
       </div>
-    </div>
+    </Drawer>
   </div>
 </template>
