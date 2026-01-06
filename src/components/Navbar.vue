@@ -1,10 +1,33 @@
 <script setup>
 import { ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import Drawer from 'primevue/drawer'
+
+import { computed } from 'vue'
+import { products } from '../data/products'
 
 const visible = ref(false)
 const hidePromotion = ref(false)
+const searchQuery = ref('')
+
+const filteredProducts = computed(() => {
+  if (!searchQuery.value) return []
+  return products.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+})
+
+const router = useRouter()
+
+const goToProduct = (id) => {
+  router.push(`/product/${id}`)
+  searchQuery.value = ''
+}
+
+const goToSearch = () => {
+  router.push(`/shop?q=${searchQuery.value}`)
+  searchQuery.value = ''
+}
 
 const menuItems = [
   { name: 'Casual', description: 'Street style & comfort', image: '/images/dress-style/image.png' },
@@ -202,28 +225,74 @@ const menuItems = [
       </div>
 
       <!-- Search Bar -->
-      <div
-        class="hidden lg:flex flex-1 max-w-md bg-[#F0F0F0] rounded-full px-4 py-3 items-center gap-3"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#909090"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+      <div class="hidden lg:block flex-1 max-w-md relative">
+        <div class="bg-[#F0F0F0] rounded-full px-4 py-3 flex items-center gap-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#909090"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+          <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Search for products..."
+            class="bg-transparent border-none outline-none w-full font-satoshi text-sm placeholder:text-[#909090]"
+          />
+        </div>
+
+        <!-- Search Recommendations Dropdown -->
+        <div
+          v-if="searchQuery && filteredProducts.length > 0"
+          class="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-lg border border-black/5 overflow-hidden z-[60]"
         >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.3-4.3" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Search for products..."
-          class="bg-transparent border-none outline-none w-full font-satoshi text-sm placeholder:text-[#909090]"
-        />
+          <div class="p-2">
+            <div
+              v-for="product in filteredProducts.slice(0, 5)"
+              :key="product.id"
+              class="flex items-center gap-3 p-2 hover:bg-[#F0F0F0] rounded-lg cursor-pointer"
+              @click="goToProduct(product.id)"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#909090"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <img
+                :src="product.images[0]"
+                :alt="product.title"
+                class="w-10 h-10 object-cover rounded-md"
+              />
+              <div>
+                <div class="text-sm font-bold text-black">{{ product.title }}</div>
+                <div class="text-xs text-black/60">${{ product.price }}</div>
+              </div>
+            </div>
+            <div
+              class="text-xs text-center p-2 text-black/60 border-t border-black/5 mt-1 cursor-pointer hover:text-black hover:underline"
+              @click="goToSearch"
+            >
+              See all results for "{{ searchQuery }}"
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Icons -->
@@ -261,22 +330,19 @@ const menuItems = [
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
           </svg>
         </RouterLink>
-        <button class="hover:text-black/60 transition-colors">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="12" cy="8" r="5" />
-            <path d="M20 21a8 8 0 0 0-16 0" />
-          </svg>
-        </button>
+        <div class="w-[2px] h-[24px] bg-[#E6E9F0] mx-2"></div>
+        <RouterLink
+          to="/login"
+          class="border border-black rounded-lg text-sm px-5 py-2 font-satoshi font-medium transition-colors w-full md:w-auto"
+        >
+          Sign In
+        </RouterLink>
+        <RouterLink
+          to="/register"
+          class="border max-sm:hidden border-black/10 rounded-lg text-sm px-5 py-2 font-satoshi font-medium bg-black text-white transition-colors w-full md:w-auto"
+        >
+          Sign Up
+        </RouterLink>
       </div>
     </nav>
 
